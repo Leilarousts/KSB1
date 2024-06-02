@@ -1,0 +1,343 @@
+*&---------------------------------------------------------------------*
+*& Include          ZCO_ZKSB1_PRINT1
+*&---------------------------------------------------------------------*
+FORM create_fieldcat2  USING it_fieldcat TYPE slis_t_fieldcat_alv.
+
+  DATA var TYPE slis_fieldcat_alv.
+
+
+  IF Acc_Gr <> 'X'.
+
+
+    CLEAR var.
+    var-fieldname = 'BUKRS'.
+    var-ref_fieldname = 'BUKRS'.
+    var-ref_tabname = 'CSKS'.
+    APPEND var TO it_fieldcat.
+
+    CLEAR var.
+    var-fieldname = 'KOSTL'.
+    var-ref_fieldname = 'KOSTL'.
+    var-ref_tabname = 'CSKS'.
+    APPEND var TO it_fieldcat.
+
+    CLEAR var.
+    var-fieldname = 'KTEXT'.
+    var-ref_fieldname = 'KTEXT'.
+    var-ref_tabname = 'CSKT'.
+    APPEND var TO it_fieldcat.
+
+    CLEAR var.
+    var-fieldname = 'LTEXT'.
+    var-ref_fieldname = 'LTEXT'.
+    var-ref_tabname = 'CSKT'.
+    APPEND var TO it_fieldcat.
+
+    CLEAR var.
+    var-fieldname = 'KOSAR'.
+    var-ref_fieldname = 'KOSAR'.
+    var-ref_tabname = 'CSKS'.
+    APPEND var TO it_fieldcat.
+
+    CLEAR var.
+    var-fieldname = 'KTEX2'.
+    var-ref_fieldname = 'KTEXT'.
+    var-ref_tabname = 'TKT05'.
+    APPEND var TO it_fieldcat.
+
+    IF details <> 'X' AND detl_acc <> 'X' .
+      CLEAR var.
+      var-fieldname = 'DATAB'.
+      var-ref_fieldname = 'DATAB'.
+      var-ref_tabname = 'CSKS'.
+      APPEND var TO it_fieldcat.
+
+      CLEAR var.
+      var-fieldname = 'DATBI'.
+      var-ref_fieldname = 'DATBI'.
+      var-ref_tabname = 'CSKS'.
+      APPEND var TO it_fieldcat.
+
+      CLEAR var.
+      var-fieldname = 'BKZKP'.
+      var-ref_fieldname = 'BKZKP'.
+      var-ref_tabname = 'CSKS'.
+      var-checkbox(1) = 'X'.
+      APPEND var TO it_fieldcat.
+    ENDIF.
+
+    CLEAR var.
+    var-fieldname = 'SEQNR'.
+    var-seltext_s = var-seltext_m = var-seltext_l = 'اولويت تسهيم'.
+    var-no_zero(1) = 'X'.
+    APPEND var TO it_fieldcat.
+
+
+    IF details <> 'X' AND detl_acc <> 'X' .
+      CLEAR var.
+      var-fieldname = 'SAHM_AVL'.
+      var-seltext_s = var-seltext_m = var-seltext_l = 'مبلغ اوليه مرکز'.
+      var-cfieldname = 'RHCUR'.
+      var-datatype = 'CURR'.
+      var-emphasize = 'C500'.
+      var-do_sum = 'X'.
+      APPEND var TO it_fieldcat.
+
+      CLEAR var.
+      var-fieldname = 'ST899437'.
+      var-seltext_s = var-seltext_m = var-seltext_l = 'جذب استاندارد اوردر'.
+      var-cfieldname = 'RHCUR'.
+      var-datatype = 'CURR'.
+      var-emphasize = 'C500'.
+      var-do_sum = 'X'.
+      APPEND var TO it_fieldcat.
+
+      CLEAR var.
+      var-fieldname = 'GET_AZ_ORDER'.
+      var-seltext_s = var-seltext_m = var-seltext_l = 'PM ستلمنت'.
+      var-cfieldname = 'RHCUR'.
+      var-datatype = 'CURR'.
+      var-emphasize = 'C500'.
+      var-do_sum = 'X'.
+      APPEND var TO it_fieldcat.
+
+      CLEAR var.
+      var-fieldname = 'SAHM_DARYAFTI'.
+      var-seltext_s = var-seltext_m = var-seltext_l = 'دريافت از ساير مراکز'.
+      var-cfieldname = 'RHCUR'.
+      var-datatype = 'CURR'.
+      var-emphasize = 'C500'.
+      var-do_sum = 'X'.
+      APPEND var TO it_fieldcat.
+
+      CLEAR var.
+      var-fieldname = 'PEYMANKARI'.
+      var-seltext_s = var-seltext_m = var-seltext_l = 'پيمانکاري'.
+      var-cfieldname = 'RHCUR'.
+      var-datatype = 'CURR'.
+      var-emphasize = 'C500'.
+      var-do_sum = 'X'.
+      APPEND var TO it_fieldcat.
+
+      CLEAR var.
+      var-fieldname = 'ENTEGHALI'.
+      var-seltext_s = var-seltext_m = var-seltext_l = 'انتقالي دوره هاي ديگر'.
+      var-cfieldname = 'RHCUR'.
+      var-datatype = 'CURR'.
+      var-emphasize = 'C500'.
+      var-do_sum = 'X'.
+      APPEND var TO it_fieldcat.
+    ENDIF.
+
+    IF detl_acc <> 'X'.
+      CLEAR var.
+      var-fieldname = 'VAREDE_TOT'.
+      var-seltext_s = var-seltext_m = var-seltext_l = 'مجموع ورودي به مرکز'.
+      var-cfieldname = 'RHCUR'.
+      var-datatype = 'CURR'.
+      var-emphasize = 'C400'.
+      var-do_sum = 'X'.
+      APPEND var TO it_fieldcat.
+    ENDIF.
+
+
+
+    IF details <> 'X' AND detl_acc <> 'X' .
+      CLEAR var.
+      var-fieldname = 'JAZB_TOLID'.
+      var-seltext_s = var-seltext_m = var-seltext_l = 'جذب در توليد'.
+      var-cfieldname = 'RHCUR'.
+      var-datatype = 'CURR'.
+      var-emphasize = 'C400'.
+      var-do_sum = 'X'.
+      APPEND var TO it_fieldcat.
+    ENDIF.
+
+
+    CLEAR var.
+    var-fieldname = 'ERSALI'.
+    var-seltext_s = var-seltext_m = var-seltext_l = 'ارسالي به ساير مراکز'.
+    var-cfieldname = 'RHCUR'.
+    var-datatype = 'CURR'.
+    var-emphasize = 'C400'.
+    var-do_sum = 'X'.
+    APPEND var TO it_fieldcat.
+
+    IF detl_acc <> 'X'.
+      CLEAR var.
+      var-fieldname = 'CC_REM'.
+      var-seltext_s = var-seltext_m = var-seltext_l = 'مانده مرکز'.
+      var-cfieldname = 'RHCUR'.
+      var-datatype = 'CURR'.
+      var-emphasize = 'C400'.
+      var-do_sum = 'X'.
+      APPEND var TO it_fieldcat.
+    ENDIF.
+
+    IF details = 'X'.
+      CLEAR var.
+      var-fieldname = 'RECV_CC'.
+      var-seltext_s = var-seltext_m = var-seltext_l = 'مراکز گيرنده'.
+      var-emphasize = 'C700'.
+      APPEND var TO it_fieldcat.
+
+      CLEAR var.
+      var-fieldname = 'KTEXT2'.
+      var-ref_fieldname = 'KTEXT'.
+      var-ref_tabname = 'CSKT'.
+      var-emphasize = 'C700'.
+      APPEND var TO it_fieldcat.
+
+      CLEAR var.
+      var-fieldname = 'LTEXT2'.
+      var-ref_fieldname = 'LTEXT'.
+      var-ref_tabname = 'CSKT'.
+      var-emphasize = 'C700'.
+      APPEND var TO it_fieldcat.
+
+      CLEAR var.
+      var-fieldname = 'SAHM_GET'.
+      var-seltext_s = var-seltext_m = var-seltext_l = 'مبلغ سهم هر مرکز'.
+      var-cfieldname = 'RHCUR'.
+      var-datatype = 'CURR'.
+      var-emphasize = 'C710'.
+      var-do_sum = 'X'.
+      APPEND var TO it_fieldcat.
+
+      CLEAR var.
+      var-fieldname = 'RATE'.
+      var-seltext_s = var-seltext_m = var-seltext_l = 'درصد سهم'.
+      var-emphasize = 'C710'.
+      APPEND var TO it_fieldcat.
+    ENDIF.
+
+    IF detl_acc = 'X'.
+      CLEAR var.
+      var-fieldname = 'RACCT'.
+      var-ref_fieldname = 'RACCT'.
+      var-ref_tabname = 'ACDOCA'.
+      APPEND var TO it_fieldcat.
+
+      CLEAR var.
+      var-fieldname = 'VALMIN'.
+      var-ref_fieldname = 'VALMIN'.
+      var-seltext_s = var-seltext_m = var-seltext_l = 'SKF'.
+      var-ref_tabname = 'T811K'.
+      APPEND var TO it_fieldcat.
+
+
+      CLEAR var.
+      var-fieldname = 'SETID2'.
+      var-ref_fieldname = 'SETID2'.
+      var-seltext_s = var-seltext_m = var-seltext_l = 'ACCOUNT GROUP'.
+      var-ref_tabname = 'T811K'.
+      APPEND var TO it_fieldcat.
+
+
+      CLEAR var.
+      var-fieldname = 'SEQ'.
+      var-ref_fieldname = 'SEQ'.
+      var-seltext_s = var-seltext_m = var-seltext_l = 'Segment_number'.
+      var-ref_tabname = 'T811S'.
+      APPEND var TO it_fieldcat.
+
+      CLEAR var.
+      var-fieldname = 'TXT'.
+      var-ref_fieldname = 'TXT'.
+      var-seltext_s = var-seltext_m = var-seltext_l = 'Segment_Name'.
+      var-ref_tabname = 'T811L'.
+      APPEND var TO it_fieldcat.
+
+    ENDIF.
+
+  ELSE.
+
+    CLEAR var.
+    var-fieldname = 'SETNAME'.
+    var-ref_fieldname = 'SETNAME'.
+    var-ref_tabname = 'SETLEAF'.
+    APPEND var TO it_fieldcat.
+
+    CLEAR var.
+    var-fieldname = 'VALFROM'.
+    var-ref_fieldname = 'VALFROM'.
+    var-ref_tabname = 'SETLEAF'.
+    APPEND var TO it_fieldcat.
+
+    CLEAR var.
+    var-fieldname = 'LTEXT'.
+    var-ref_fieldname = 'LTEXT'.
+    var-ref_tabname = 'CSKU'.
+    APPEND var TO it_fieldcat.
+
+  ENDIF.
+
+
+
+
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*& Form BUILD_LAYOUT2
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*      -->P_GS_LAYOUT  text
+*&---------------------------------------------------------------------*
+FORM build_layout2  USING   p_gs_layout TYPE slis_layout_alv.
+
+  p_gs_layout-zebra = 'X'.                   " خروجي راه راه باشد.
+  p_gs_layout-colwidth_optimize = 'X'.       "سايز ستونها
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*& Form DISPLAY2
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM display2 .
+
+  IF details = 'X'.
+    CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY'
+      EXPORTING
+        i_callback_program = sy-repid
+        is_layout          = gs_layout
+        it_fieldcat        = gt_fieldcat[]
+      TABLES
+        t_outtab           = itab3
+      EXCEPTIONS
+        program_error      = 1
+        OTHERS             = 2.
+    IF sy-subrc <> 0.
+    ENDIF.
+  ELSEIF Acc_Gr = 'X'.
+    CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY'
+      EXPORTING
+        i_callback_program = sy-repid
+        is_layout          = gs_layout
+        it_fieldcat        = gt_fieldcat[]
+      TABLES
+        t_outtab           = it_elm
+      EXCEPTIONS
+        program_error      = 1
+        OTHERS             = 2.
+    IF sy-subrc <> 0.
+    ENDIF.
+  ELSE.
+    CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY'
+      EXPORTING
+        i_callback_program = sy-repid
+        is_layout          = gs_layout
+        it_fieldcat        = gt_fieldcat[]
+      TABLES
+        t_outtab           = itab1
+      EXCEPTIONS
+        program_error      = 1
+        OTHERS             = 2.
+    IF sy-subrc <> 0.
+    ENDIF.
+  ENDIF.
+ENDFORM.

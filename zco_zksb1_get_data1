@@ -1,0 +1,355 @@
+*&---------------------------------------------------------------------*
+*& Include          ZCO_ZKSB1_GET_DATA1
+*&---------------------------------------------------------------------*
+FORM get_cc_data .
+
+  IF detl_acc <> 'X'.
+
+    CLEAR itab1.
+    SELECT csks~kokrs, csks~bukrs, csks~kostl, csks~datab, csks~datbi, csks~bkzkp, csks~kosar, csks~objnr, cskt~ktext, cskt~ltext, tkt05~ktext AS ktex2, prctr
+      FROM csks
+      INNER JOIN cskt ON cskt~kostl EQ csks~kostl AND cskt~kokrs EQ csks~kokrs AND cskt~spras = @sy-langu AND cskt~datbi >= @sy-datum
+      INNER JOIN tkt05 ON tkt05~kosar EQ csks~kosar AND tkt05~spras = @sy-langu
+      INTO CORRESPONDING FIELDS OF TABLE @itab1
+      WHERE csks~kokrs IN @s_kokrs
+        AND csks~bukrs IN @s_bukrs
+        AND csks~kostl IN @s_kostl
+        AND csks~kosar IN @s_kosar
+        AND csks~datab <= @sy-datum
+        AND csks~datbi >= @sy-datum.
+
+
+    IF sy-subrc = 0.
+      SORT itab1 BY bukrs kostl.
+    ENDIF.
+
+    LOOP AT itab1 ASSIGNING FIELD-SYMBOL(<a>).
+      CONCATENATE <a>-bukrs 'S' INTO <a>-cc_olaviyat_catg.
+
+      SELECT SINGLE seqnr
+        FROM setleaf
+        INTO <a>-seqnr
+        WHERE
+        subclass = <a>-kokrs
+        AND setclass = '0101'
+        AND setleaf~setname = <a>-cc_olaviyat_catg
+        AND valfrom = <a>-kostl.
+
+      SELECT SINGLE acdoca~rhcur, SUM( acdoca~hsl ) AS sahm_avl
+      FROM acdoca
+      INTO ( @<a>-rhcur, @<a>-sahm_avl )
+      WHERE acdoca~rldnr  = '0L'
+        AND acdoca~kokrs  = @<a>-kokrs
+        AND acdoca~rbukrs = @<a>-bukrs
+        AND acdoca~gjahr IN @s_gjahr
+        AND poper        IN @s_poper
+        AND acdoca~rcntr  = @<a>-kostl
+        AND acdoca~prctr  = @<a>-prctr
+        AND racct BETWEEN '7000000000' AND '7999999999'
+        GROUP BY acdoca~rhcur.
+
+
+      SELECT SINGLE acdoca~rhcur, SUM( acdoca~hsl ) AS st899437
+        FROM acdoca
+        INTO ( @<a>-rhcur, @<a>-st899437 )
+        WHERE acdoca~rldnr  = '0L'
+        AND acdoca~kokrs  = @<a>-kokrs
+        AND acdoca~rbukrs = @<a>-bukrs
+        AND acdoca~gjahr IN @s_gjahr
+        AND poper        IN @s_poper
+        AND acdoca~rcntr  = @<a>-kostl
+        AND acdoca~prctr  = @<a>-prctr
+        AND racct = '8994300007'
+        GROUP BY acdoca~rhcur.
+
+      SELECT SINGLE acdoca~rhcur, SUM( acdoca~hsl ) AS  get_az_order "settel
+        FROM acdoca
+        INTO ( @<a>-rhcur, @<a>-get_az_order )
+        WHERE acdoca~rldnr  = '0L'
+        AND acdoca~kokrs  = @<a>-kokrs
+        AND acdoca~rbukrs = @<a>-bukrs
+        AND acdoca~gjahr IN @s_gjahr
+        AND poper        IN @s_poper
+        AND acdoca~paccasty = 'OR'
+        AND acdoca~rcntr   = @<a>-kostl
+        AND acdoca~prctr   = @<a>-prctr
+        AND racct BETWEEN '8994200000' AND '8994299999'
+        GROUP BY acdoca~rhcur.
+
+
+      SELECT SINGLE acdoca~rhcur, SUM( acdoca~hsl ) AS sahm_daryafti
+      FROM acdoca
+      INTO ( @<a>-rhcur, @<a>-sahm_daryafti )
+      WHERE acdoca~rldnr  =  '0L'
+        AND acdoca~kokrs  =  @<a>-kokrs
+        AND acdoca~rbukrs =  @<a>-bukrs
+        AND acdoca~gjahr IN  @s_gjahr
+        AND poper        IN  @s_poper
+        AND acdoca~rcntr  =  @<a>-kostl
+        AND acdoca~ukostl <> @<a>-kostl
+        AND acdoca~prctr  =  @<a>-prctr
+        AND acdoca~paccasty <> 'OR'
+        AND racct BETWEEN '8994200000' AND '8994299999'
+        GROUP BY acdoca~rhcur.
+
+      SELECT SINGLE acdoca~rhcur, SUM( acdoca~hsl ) AS peymankari
+      FROM acdoca
+      INTO ( @<a>-rhcur, @<a>-peymankari )
+      WHERE acdoca~rldnr  =  '0L'
+        AND acdoca~kokrs  =  @<a>-kokrs
+        AND acdoca~rbukrs =  @<a>-bukrs
+        AND acdoca~gjahr IN  @s_gjahr
+        AND poper        IN  @s_poper
+        AND acdoca~rcntr  =  @<a>-kostl
+        AND acdoca~prctr  =  @<a>-prctr
+        AND acdoca~paccasty = ''
+        AND racct BETWEEN '8950000000' AND '8959999999'
+        GROUP BY acdoca~rhcur.
+
+
+      SELECT SINGLE acdoca~rhcur, SUM( acdoca~hsl ) AS enteghali
+      FROM acdoca
+      INTO ( @<a>-rhcur, @<a>-enteghali )
+      WHERE acdoca~rldnr  = '0L'
+      AND acdoca~kokrs  = @<a>-kokrs
+      AND acdoca~rbukrs = @<a>-bukrs
+      AND acdoca~gjahr IN @s_gjahr
+      AND poper        IN @s_poper
+      AND acdoca~rcntr  = @<a>-kostl
+      AND acdoca~prctr  = @<a>-prctr
+      AND racct = '8992100005'
+      GROUP BY acdoca~rhcur.
+
+      <a>-varede_tot = <a>-sahm_avl + <a>-get_az_order + <a>-sahm_daryafti + <a>-peymankari + <a>-enteghali.
+
+
+      SELECT SINGLE acdoca~rhcur, SUM( acdoca~hsl ) AS jazb_tolid
+      FROM acdoca
+      INTO ( @<a>-rhcur, @<a>-jazb_tolid )
+      WHERE acdoca~rldnr  = '0L'
+        AND acdoca~kokrs  = @<a>-kokrs
+        AND acdoca~rbukrs = @<a>-bukrs
+        AND acdoca~gjahr IN @s_gjahr
+        AND poper        IN @s_poper
+        AND acdoca~rcntr  = @<a>-kostl
+        AND acdoca~ukostl = @<a>-kostl
+        AND acdoca~prctr  = @<a>-prctr
+        AND acdoca~paccasty = 'OR'
+        AND racct BETWEEN '8994300001' AND '8994300006'
+        GROUP BY acdoca~rhcur.
+
+
+
+      SELECT SINGLE acdoca~rhcur, SUM( acdoca~hsl ) AS ersali
+      FROM acdoca
+      INTO ( @<a>-rhcur, @<a>-ersali )
+      WHERE acdoca~rldnr  = '0L'
+        AND acdoca~kokrs  = @<a>-kokrs
+        AND acdoca~rbukrs = @<a>-bukrs
+        AND acdoca~gjahr IN @s_gjahr
+        AND poper        IN @s_poper
+        AND acdoca~rcntr  = @<a>-kostl
+        AND acdoca~ukostl = @<a>-kostl
+        AND acdoca~prctr  = @<a>-prctr
+        AND acdoca~paccasty <> 'OR'
+        AND racct BETWEEN '8994200000' AND '8994299999'
+        GROUP BY acdoca~rhcur.
+
+
+      <a>-cc_rem = <a>-ersali + <a>-varede_tot + <a>-jazb_tolid.
+
+    ENDLOOP.
+
+
+*-------------------------------------------------------------- details Report
+
+    IF details = 'X'.
+      DELETE itab1 WHERE seqnr < '1' .
+
+      TYPES: BEGIN OF stru_details,
+               kokrs    TYPE acdoca-kokrs,
+               rbukrs   TYPE acdoca-rbukrs,
+               rcntr    TYPE acdoca-rcntr,
+               recv_cc  TYPE acdoca-scntr,
+               ktext2   TYPE cskt-ktext,
+               ltext2   TYPE cskt-ltext,
+               rhcur    TYPE acdoca-rhcur,
+               sahm_get TYPE acdoca-hsl,
+               rate     TYPE p DECIMALS 2,
+             END OF stru_details.
+
+      DATA: itab2 TYPE TABLE OF stru_details,
+            wa2   TYPE stru_details.
+
+
+      CLEAR itab2.
+      SELECT kokrs, rbukrs, rcntr, scntr AS recv_cc, acdoca~rhcur,  SUM( acdoca~hsl ) AS sahm_get
+        FROM acdoca
+        INTO CORRESPONDING FIELDS OF TABLE @itab2
+        WHERE acdoca~rldnr  = '0L'
+          AND acdoca~kokrs  IN @s_kokrs
+          AND acdoca~rbukrs IN @s_bukrs
+          AND acdoca~gjahr  IN @s_gjahr
+          AND poper         IN @s_poper
+          AND acdoca~rcntr  IN @s_kostl
+          AND acdoca~ukostl = acdoca~rcntr
+          AND acdoca~paccasty <> 'OR'
+          AND racct BETWEEN '8990000000' AND '8999999999'
+        GROUP BY kokrs, rbukrs, rcntr , scntr, rhcur.
+
+
+      LOOP AT itab2 ASSIGNING FIELD-SYMBOL(<b>).
+
+        <b>-sahm_get = -1 * <b>-sahm_get.
+
+        SELECT SINGLE cskt~ktext AS ktext2, cskt~ltext AS ltext2
+          FROM cskt
+          INTO  ( @<b>-ktext2, @<b>-ltext2 )
+          WHERE cskt~kostl =  @<b>-recv_cc
+            AND cskt~spras =  @sy-langu
+            AND cskt~datbi >= @sy-datum.
+      ENDLOOP.
+
+      LOOP AT itab1 INTO wa1.
+        LOOP AT itab2 INTO wa2 WHERE kokrs = wa1-kokrs AND rbukrs = wa1-bukrs AND rcntr = wa1-kostl.
+
+          MOVE-CORRESPONDING wa1 TO wa3.
+          MOVE-CORRESPONDING wa2 TO wa3.
+
+          IF wa1-ersali <> 0.
+            wa3-rate = ( wa2-sahm_get / wa1-ersali ) * -100.
+          ENDIF.
+          INSERT wa3 INTO TABLE itab3.
+
+        ENDLOOP.
+      ENDLOOP.
+    ENDIF.
+
+
+    IF sy-subrc = 0.
+      SORT itab1 BY bukrs seqnr kostl.
+      SORT itab3 BY bukrs seqnr sahm_get DESCENDING kostl.
+    ENDIF.
+
+
+
+*-------------------------------------------------------------- detail_account Report
+
+  ELSEIF detl_acc = 'X'.
+
+    CLEAR itab1.
+    SELECT csks~kokrs, csks~bukrs, csks~kostl, acdoca~racct, csks~datab, csks~datbi, csks~bkzkp, csks~kosar, csks~objnr, cskt~ktext, cskt~ltext, tkt05~ktext AS ktex2, csks~prctr, SUM( acdoca~hsl )  AS ersali
+      FROM csks
+      INNER JOIN cskt ON cskt~kostl EQ csks~kostl AND cskt~kokrs EQ csks~kokrs AND cskt~spras = @sy-langu AND cskt~datbi >= @sy-datum
+      INNER JOIN tkt05 ON tkt05~kosar EQ csks~kosar AND tkt05~spras = @sy-langu
+      INNER JOIN acdoca ON acdoca~rbukrs EQ csks~bukrs AND acdoca~kokrs EQ csks~kokrs AND acdoca~scntr EQ csks~kostl
+      WHERE csks~kokrs IN @s_kokrs
+        AND csks~bukrs IN @s_bukrs
+        AND csks~kostl IN @s_kostl
+        AND csks~kosar IN @s_kosar
+        AND csks~datab <= @sy-datum
+        AND csks~datbi >= @sy-datum
+        AND acdoca~gjahr IN @s_gjahr
+        AND poper IN @s_poper
+      AND acdoca~ukostl = acdoca~scntr
+*      AND acdoca~prctr  IS NOT INITIAL
+      AND acdoca~paccasty <> 'OR'
+*      AND racct BETWEEN '8994200000' AND '8994299999'
+       AND acdoca~rldnr  = '0L'
+       GROUP BY csks~kokrs, csks~bukrs, csks~kostl, acdoca~racct, csks~datab, csks~datbi, csks~bkzkp, csks~kosar, csks~objnr, cskt~ktext, cskt~ltext, tkt05~ktext, csks~prctr
+       INTO CORRESPONDING FIELDS OF TABLE @itab1.
+
+
+    IF sy-subrc = 0.
+      SORT itab1 BY bukrs kostl.
+    ENDIF.
+
+    LOOP AT itab1 ASSIGNING FIELD-SYMBOL(<z>).
+      CONCATENATE <z>-bukrs 'S' INTO <z>-cc_olaviyat_catg.
+
+      SELECT SINGLE seqnr
+        FROM setleaf
+        INTO <z>-seqnr
+        WHERE
+        subclass = <z>-kokrs
+        AND setclass = '0101'
+        AND setleaf~setname = <z>-cc_olaviyat_catg
+        AND valfrom = <z>-kostl.
+
+    ENDLOOP.
+
+
+    IF sy-subrc = 0.
+      SORT itab1 BY bukrs seqnr ASCENDING kostl racct.
+    ENDIF.
+    DELETE itab1 WHERE seqnr < '1'.
+
+    LOOP AT itab1 ASSIGNING <z>.
+      <z>-ersali = <z>-ersali * 100.
+      CONCATENATE <z>-kokrs <z>-bukrs INTO <z>-cycle.
+      SELECT SINGLE seqnr AS seq FROM t811s  INTO @<z>-seq WHERE asacc = @<z>-racct AND cycle = @<z>-cycle.
+      SELECT SINGLE valmin FROM t811k INTO @<z>-valmin WHERE seqnr = @<z>-seq AND cycle = @<z>-cycle AND field = 'STAGR'.
+      SELECT SINGLE setid FROM t811k INTO @<z>-setid WHERE seqnr = @<z>-seq AND cycle = @<z>-cycle AND field = 'KSTAR'.
+      SELECT SINGLE txt FROM t811l INTO @<z>-txt WHERE seqnr = @<z>-seq AND  cycle = @<z>-cycle.
+      <z>-setid2 = <z>-setid+8(3).
+    ENDLOOP.
+
+  ENDIF.
+
+
+ENDFORM.
+
+FORM Acc_Gr .
+
+  TYPES: BEGIN OF setid,
+           setid  TYPE t811k-setid,
+           setid2 TYPE t811k-setid,
+         END OF setid.
+
+  DATA: setid TYPE TABLE OF setid,
+        wast  TYPE setid.
+
+  DATA c TYPE t811s-cycle.
+
+  CONCATENATE s_kokrs-low s_bukrs-low INTO c.
+
+  SELECT setid FROM t811k INTO CORRESPONDING FIELDS OF TABLE @setid WHERE cycle = @c AND field = 'KSTAR'.
+
+  IF sy-subrc = 0.
+    SORT setid BY setid.
+  ENDIF.
+  DELETE ADJACENT DUPLICATES FROM setid COMPARING ALL FIELDS.
+
+  LOOP AT setid ASSIGNING FIELD-SYMBOL(<p>).
+    <p>-setid2 = <p>-setid+8(3).
+  ENDLOOP.
+*----------------------------------------------------
+
+  SELECT setleaf~setname, setleaf~valfrom,
+         csku~ltext
+  FROM setleaf
+  INNER JOIN csku  ON csku~ktopl EQ setleaf~subclass
+                  AND csku~kstar EQ setleaf~valfrom
+  WHERE setleaf~setclass EQ '0102'
+    AND setleaf~subclass EQ 'SCOA'
+*      AND SETLEAF~SETNAME IN ( 'PER' ) "@ELM_GP
+    AND csku~spras EQ 'E'
+  INTO TABLE @it_elm
+  .
+
+  LOOP AT it_elm ASSIGNING FIELD-SYMBOL(<r>).
+    READ TABLE setid  WITH KEY setid2 = <r>-setname INTO elm.
+    IF sy-subrc <> 0.
+      <r>-s = 'M' .
+    ENDIF.
+
+  ENDLOOP.
+
+  delete it_elm WHERE s = 'M' .
+
+
+  IF sy-subrc = 0.
+    SORT it_elm BY setname valfrom.
+  ENDIF.
+
+ENDFORM.

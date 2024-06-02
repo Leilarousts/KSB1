@@ -1,0 +1,162 @@
+*&---------------------------------------------------------------------*
+*& Include          ZCO_ZKSB1_HEAD1
+*&---------------------------------------------------------------------*
+TABLES: csks, cskt, tkt05, setleaf, acdoca, t811s, t811k, t811l, csku.
+
+
+TYPES: BEGIN OF cc_stru,
+         kokrs                TYPE csks-kokrs,  "Controlling Area
+         bukrs                TYPE csks-bukrs,  "Company Code
+         kostl                TYPE csks-kostl,  "Cost Center
+         datab                TYPE csks-datab,  "Valid From
+         datbi                TYPE csks-datbi,  "Valid To
+         bkzkp                TYPE csks-bkzkp,  "Actual primary costs
+         kosar                TYPE csks-kosar,  "Cost Center Category
+         objnr                TYPE csks-objnr,  "Object number
+         ktext                TYPE cskt-ktext,  "cc Name
+         ltext                TYPE cskt-ltext,  "cc Description
+         ktex2                TYPE tkt05-ktext, "cc category desc
+         cc_olaviyat_catg(20) TYPE c,
+         seqnr                TYPE setleaf-seqnr,  "Set Line
+         sahm_avl             TYPE acdoca-hsl,     "sahme avaliye
+         rhcur                TYPE acdoca-rhcur,   "currency
+         sahm_daryafti        TYPE acdoca-hsl,     "sahme daryafti
+         get_az_order         TYPE acdoca-hsl,     "sahme daryafti az order
+         varede_tot           TYPE acdoca-hsl,     "varede kol
+         ersali               TYPE acdoca-hsl,     "sahme ersali
+         cc_rem               TYPE acdoca-hsl,     "mande markaz
+         st899437             TYPE acdoca-hsl,     "jazb standard az markaz 8994300007
+         jazb_tolid           TYPE acdoca-hsl,     "jazb dar tolid
+         peymankari           TYPE acdoca-hsl,     "Peymankari CC:XX
+         enteghali            TYPE acdoca-hsl,     "enteghal hazine
+         prctr                TYPE csks-prctr,     "Profit Center
+         racct                TYPE acdoca-racct,   "account
+         seq                  TYPE t811s-seqnr, "segment_number
+         cycle                TYPE t811s-cycle, "CYCLE
+         valmin               TYPE t811k-valmin, "account group
+         txt                  TYPE t811l-txt, "segment_name
+         setid                TYPE t811k-setid,
+         setid2               TYPE t811k-setid,
+       END OF cc_stru.
+
+DATA: itab1 TYPE TABLE OF cc_stru,
+      wa1   TYPE cc_stru.
+
+*------------------------------------------------------------------------------
+
+TYPES: BEGIN OF total_stru,
+         kokrs         TYPE csks-kokrs,  "Controlling Area
+         bukrs         TYPE csks-bukrs,  "Company Code
+         kostl         TYPE csks-kostl,  "Cost Center
+         datab         TYPE csks-datab,  "Valid From
+         datbi         TYPE csks-datbi,  "Valid To
+         bkzkp         TYPE csks-bkzkp,  "Actual primary costs
+         kosar         TYPE csks-kosar,  "Cost Center Category
+         ktext         TYPE cskt-ktext,  "cc Name
+         ltext         TYPE cskt-ltext,  "cc Description
+         ktex2         TYPE tkt05-ktext, "cc category desc
+         seqnr         TYPE setleaf-seqnr,  "Set Line
+         sahm_avl      TYPE acdoca-hsl,     "sahme avaliye
+         rhcur         TYPE acdoca-rhcur,   "currency
+         st899437      TYPE acdoca-hsl,     "jazb standard az markaz 8994300007
+         get_az_order  TYPE acdoca-hsl,     "sahme daryafti az order
+         sahm_daryafti TYPE acdoca-hsl,     "sahme daryafti
+         varede_tot    TYPE acdoca-hsl,     "varede kol
+         ersali        TYPE acdoca-hsl,     "sahme ersali
+         cc_rem        TYPE acdoca-hsl,     "mande markaz
+         recv_cc       TYPE acdoca-rcntr,   "Receiver CC
+         ktext2        TYPE cskt-ktext,     "Receiver cc Name
+         ltext2        TYPE cskt-ltext,     "Receiver cc Description
+         sahm_get      TYPE acdoca-hsl,     "sahme daryafti
+         rate          TYPE p DECIMALS 2,
+         jazb_tolid    TYPE acdoca-hsl,     "jazb dar tolid
+         peymankari    TYPE acdoca-hsl,     "Peymankari CC:XX
+         prctr         TYPE csks-prctr,     "Profit Center
+         racct         TYPE acdoca-racct,   "account
+         seq           TYPE t811s-seqnr, "segment_number
+         cycle         TYPE t811s-cycle, "CYCLE
+         valmin        TYPE t811k-valmin, "account group
+         txt           TYPE t811l-txt, "segment_name
+       END OF total_stru.
+
+DATA: itab3 TYPE TABLE OF total_stru WITH HEADER LINE,
+      wa3   TYPE total_stru.
+
+
+TYPES: BEGIN OF cc_stru4,
+         kokrs                TYPE csks-kokrs,  "Controlling Area
+         bukrs                TYPE csks-bukrs,  "Company Code
+         kostl                TYPE csks-kostl,  "Cost Center
+         datab                TYPE csks-datab,  "Valid From
+         datbi                TYPE csks-datbi,  "Valid To
+         bkzkp                TYPE csks-bkzkp,  "Actual primary costs
+         kosar                TYPE csks-kosar,  "Cost Center Category
+         objnr                TYPE csks-objnr,  "Object number
+         ktext                TYPE cskt-ktext,  "cc Name
+         ltext                TYPE cskt-ltext,  "cc Description
+         ktex2                TYPE tkt05-ktext, "cc category desc
+         cc_olaviyat_catg(20) TYPE c,
+         seqnr                TYPE setleaf-seqnr,  "Set Line
+         sahm_avl             TYPE acdoca-hsl,     "sahme avaliye
+         rhcur                TYPE acdoca-rhcur,   "currency
+         sahm_daryafti        TYPE acdoca-hsl,     "sahme daryafti
+         get_az_order         TYPE acdoca-hsl,     "sahme daryafti az order
+         varede_tot           TYPE acdoca-hsl,     "varede kol
+         ersali               TYPE acdoca-hsl,     "sahme ersali
+         cc_rem               TYPE acdoca-hsl,     "mande markaz
+         st899437             TYPE acdoca-hsl,     "jazb standard az markaz 8994300007
+         jazb_tolid           TYPE acdoca-hsl,     "jazb dar tolid
+         peymankari           TYPE acdoca-hsl,     "Peymankari CC:XX
+         enteghali            TYPE acdoca-hsl,     "enteghal hazine
+         prctr                TYPE csks-prctr,     "Profit Center
+         racct                TYPE acdoca-racct,   "account
+       END OF cc_stru4.
+
+DATA: itab4 TYPE TABLE OF cc_stru4,
+      wa4   TYPE cc_stru4.
+
+
+TYPES:
+  BEGIN OF ty_elm,
+
+    setname TYPE setleaf-setname,
+    valfrom TYPE setleaf-valfrom,
+
+    ltext   TYPE csku-ltext,
+    s       TYPE c,
+
+  END OF ty_elm.
+
+DATA:
+  it_elm TYPE TABLE OF ty_elm,
+      elm   TYPE cc_stru4.
+
+
+*----------------------------------------------------------------------------
+
+SELECTION-SCREEN: BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.
+  SELECTION-SCREEN SKIP 1.
+  SELECT-OPTIONS:
+           s_kokrs FOR csks-kokrs NO INTERVALS NO-EXTENSION DEFAULT '1000',
+           s_bukrs FOR csks-bukrs OBLIGATORY,
+           s_kostl FOR csks-kostl,
+           s_kosar FOR csks-kosar NO INTERVALS.
+SELECTION-SCREEN: END OF BLOCK b1.
+
+SELECTION-SCREEN: BEGIN OF BLOCK b2 WITH FRAME TITLE TEXT-002.
+  SELECTION-SCREEN SKIP 1.
+  SELECT-OPTIONS:
+           s_gjahr FOR acdoca-gjahr NO INTERVALS NO-EXTENSION DEFAULT '2022',
+           s_poper FOR acdoca-poper.
+SELECTION-SCREEN: END OF BLOCK b2.
+
+SELECTION-SCREEN: BEGIN OF BLOCK b3 WITH FRAME TITLE TEXT-003.
+  PARAMETERS:details AS CHECKBOX.
+  PARAMETERS:detl_acc AS CHECKBOX.
+  PARAMETERS:Acc_Gr AS CHECKBOX.
+SELECTION-SCREEN: END OF BLOCK b3.
+
+
+DATA: gt_fieldcat TYPE slis_t_fieldcat_alv,
+      gv_lines    TYPE i,
+      gs_layout   TYPE slis_layout_alv.

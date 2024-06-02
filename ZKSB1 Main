@@ -1,0 +1,24 @@
+*&---------------------------------------------------------------------*
+*& Report ZCO_KSB1
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+report zco_ksb1.
+
+include zco_zksb1_head1.
+include zco_zksb1_get_data1.
+include zco_zksb1_print1.
+
+
+
+start-of-selection.
+if Acc_Gr = 'X'.
+  perform Acc_Gr.
+  else.
+  perform get_cc_data.
+  ENDIF.
+
+end-of-selection.
+  perform create_fieldcat2 using gt_fieldcat[].
+  perform build_layout2    using gs_layout.
+  perform display2.
